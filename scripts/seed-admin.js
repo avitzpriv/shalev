@@ -15,7 +15,8 @@ async function main() {
       email,
       password: hashedPassword,
       role: 'ADMIN',
-      twoFactorEnabled: false // For initial access
+      mustChangePassword: false,
+      twoFactorEnabled: false
     }
   })
 
