@@ -22,6 +22,7 @@ model User {
   password          String
   role              UserRole @default(CLERK)
   phoneNumber       String?
+  mustChangePassword Boolean  @default(true)
   twoFactorEnabled  Boolean  @default(false)
   twoFactorCode     String?
   twoFactorExpires  DateTime?

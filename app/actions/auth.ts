@@ -52,6 +52,10 @@ export async function loginAction(formData: any) {
       redirect: false,
     });
 
+    if (user.mustChangePassword) {
+      return { mustChangePassword: true };
+    }
+
     return { success: true };
   } catch (error) {
     if (error instanceof AuthError) {
@@ -94,6 +98,10 @@ export async function verify2FAAction(email: string, code: string, password: any
       password,
       redirect: false,
     });
+
+    if (user.mustChangePassword) {
+      return { mustChangePassword: true };
+    }
 
     return { success: true };
   } catch (error) {

@@ -25,6 +25,8 @@ export default function LoginPage() {
       setError(res.error);
     } else if (res?.twoFactor) {
       setStep(2);
+    } else if (res?.mustChangePassword) {
+      router.push("/auth/change-password");
     } else if (res?.success) {
       router.push("/dashboard");
       router.refresh();
@@ -41,6 +43,8 @@ export default function LoginPage() {
 
     if (res?.error) {
       setError(res.error);
+    } else if (res?.mustChangePassword) {
+      router.push("/auth/change-password");
     } else if (res?.success) {
       router.push("/dashboard");
       router.refresh();
