@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CLERK
+  DOCTOR
+}
+
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  password          String
+  role              UserRole @default(CLERK)
+  phoneNumber       String?
+  twoFactorEnabled  Boolean  @default(false)
+  twoFactorCode     String?
+  twoFactorExpires  DateTime?
+  lastLoginAt       DateTime?
+  dashboardColumns  String?  @db.Text // Comma-separated list of visible column keys
+  decisions         Decision[]
+  createdAt         DateTime @default(now())
+}
+
+model Questionnaire {
+  id        String   @id @default(cuid())
+  submittedAt DateTime @default(now())
+  status    String   @default("NEW") // e.g., NEW, PENDING_REVIEW, DECIDED, ARCHIVED
+  priority  Int?     @default(0)
+
+  // Part A: Personal Details
+  fullName  String
+  idNumber  String
+  dateOfBirth DateTime
+  gender    String
+  city      String
+  hmo       String
+  language  String
+  maritalStatus String
+  hasChildren Boolean
+  childrenAges String?
+  employmentStatus String
+  receivesDisability Boolean
+  militaryService String
+
+  // Part B: Evaluation (1-5)
+  scoreSafety           Int
+  scoreFunctioning      Int
+  scorePhysicalDrug     Int
+  scoreEnvironment      Int
+  scoreStress           Int
+  scoreReadiness        Int
+
+  // Part C: Background
+  isFirstVisit        Boolean
+  pastTreatment       String?
+  rehabBasket         Boolean
+  hasCoordinator      Boolean
+  referringSource     String
+  reasonForReferral   String
+  hasDrugUse          Boolean  @default(false)
+  drugType            String?
+  drugFrequency       String?
+  hasAlcoholUse       Boolean  @default(false)
+  alcoholType         String?
+  alcoholFrequency    String?
+  expectations        String?
+
+  // Part D: Notes
+  notes               String?
+
+  decisions Decision[]
+  recommendations Recommendation[]
+}
+
+model Recommendation {
+  id              String        @id @default(cuid())
+  questionnaire   Questionnaire @relation(fields: [questionnaireId], references: [id])
+  questionnaireId String
+  locusLevel      Int
+  intensityStr    String
+  timestamp       DateTime      @default(now())
+}
+
+model Decision {
+  id              String        @id @default(cuid())
+  questionnaire   Questionnaire @relation(fields: [questionnaireId], references: [id])
+  questionnaireId String
+  doctor          User          @relation(fields: [doctorId], references: [id])
+  doctorId        String
+  decisionType    String        // Admin-defined options
+  argumentation   String?
+  timestamp       DateTime      @default(now())
+}
+
+model ConfigItem {
+  id    String @id @default(cuid())
+  key   String @unique // e.g., "hmo-options", "language-options", "decision-types"
+  value String @db.Text // JSON string or comma-separated values
+}

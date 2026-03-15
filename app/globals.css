@@ -1,0 +1,220 @@
+:root {
+  /* Hillel Yaffe Colors & Constants */
+  --hy-blue: #0082c8;
+  --hy-green: #8bc63f;
+  --hy-dark-blue: #005a8c;
+  --hy-light-blue: #e6f4fa;
+  
+  /* Modern Clean Theme Tokens */
+  --bg-color: #f4f7f9;
+  --white: #ffffff;
+  --border-color: #d1d9e6;
+  --accent-color: var(--hy-blue);
+  --text-primary: #2c3e50;
+  --text-secondary: #5a6c7d;
+  --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Layout */
+  --radius: 10px;
+  --spacing: 24px;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  direction: rtl;
+  margin: 0;
+  padding: var(--spacing);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Modern Card Components */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-subtle);
+  padding: var(--spacing);
+  margin-bottom: var(--spacing);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Clean Inputs & Forms */
+.input, select, textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--white);
+  color: var(--text-primary);
+  margin-top: 8px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--hy-blue);
+  box-shadow: 0 0 0 3px rgba(0, 130, 200, 0.1);
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 15px;
+}
+
+/* Modern Buttons */
+.btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--white);
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.btn-primary {
+  background: var(--hy-blue);
+  color: var(--white);
+  border-color: var(--hy-blue);
+}
+
+.btn-primary:hover {
+  background: var(--hy-dark-blue);
+  border-color: var(--hy-dark-blue);
+}
+
+.btn-success {
+  background: var(--hy-green);
+  color: var(--white);
+  border-color: var(--hy-green);
+}
+
+/* Typography */
+h1, h2, h3 {
+  color: var(--hy-blue);
+  margin-top: 0;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 1.4rem;
+  border-right: 4px solid var(--hy-green);
+  padding-right: 12px;
+  margin-bottom: 1rem;
+}
+
+.title-center {
+  text-align: center;
+}
+
+/* Form Helper Classes */
+.mandatory::after {
+  content: " *";
+  color: #ef4444;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing);
+}
+
+@media (max-width: 600px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+th {
+  background: var(--hy-light-blue);
+  color: var(--hy-dark-blue);
+  font-weight: 700;
+  text-align: right;
+  padding: 12px;
+}
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Navigation */
+.navbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border-color);
+  padding: 10px 0;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-subtle);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--hy-blue);
+}
+
+.nav-link.active {
+  color: var(--hy-blue);
+  border-bottom: 2px solid var(--hy-blue);
+}
