@@ -17,12 +17,13 @@ interface Questionnaire {
   maritalStatus: string;
   employmentStatus: string;
   priority: number | null;
-  scoreSafety: number;
   scoreFunctioning: number;
   scorePhysicalDrug: number;
   scoreEnvironment: number;
   scoreStress: number;
   scoreReadiness: number;
+  scoreSafetyHarm: number;
+  scoreSafetyOthers: number;
   reasonForReferral: string;
   decisions?: { decisionType: string }[];
   recommendations?: { intensityStr: string }[];
@@ -42,12 +43,13 @@ const ALL_COLUMNS = [
   { key: 'maritalStatus', label: 'מצב משפחתי', options: ['רווק/ה', 'נשוי/ה', 'גרוש/ה', 'אלמן/ה'] },
   { key: 'employmentStatus', label: 'תעסוקה', options: ['עובד', 'לא עובד', 'גמלאי'] },
   { key: 'priority', label: 'עדיפות' },
-  { key: 'scoreSafety', label: 'בטיחות', options: ['1','2','3','4','5'] },
   { key: 'scoreFunctioning', label: 'תפקוד', options: ['1','2','3','4','5'] },
-  { key: 'scorePhysicalDrug', label: 'גופני/סמים', options: ['1','2','3','4','5'] },
+  { key: 'scorePhysicalDrug', label: 'גופני', options: ['1','2','3','4','5'] },
   { key: 'scoreEnvironment', label: 'סביבה', options: ['1','2','3','4','5'] },
   { key: 'scoreStress', label: 'דחק', options: ['1','2','3','4','5'] },
   { key: 'scoreReadiness', label: 'מוכנות', options: ['1','2','3','4','5'] },
+  { key: 'scoreSafetyHarm', label: 'פגיעה עצמית', options: ['1','2','3','4','5'] },
+  { key: 'scoreSafetyOthers', label: 'פגיעה מאחרים', options: ['1','2','3','4','5'] },
   { key: 'reasonForReferral', label: 'סיבת פנייה' },
 ];
 
@@ -68,7 +70,7 @@ function getStatusChipStyle(status: string): React.CSSProperties {
 }
 
 function getRowBg(sub: Questionnaire, isSelected: boolean): string {
-  if (sub.scoreSafety === 5) return isSelected ? '#ffcdd2' : '#ffebee';
+  if (Math.max(sub.scoreSafetyHarm, sub.scoreSafetyOthers) >= 4) return isSelected ? '#ffcdd2' : '#ffebee';
   if (sub.status === 'NEW') return isSelected ? '#e1bee7' : '#f3e5f5';
   if (sub.status === 'DECIDED') return isSelected ? '#c8e6c9' : '#f1f8e9';
   if (sub.status === 'PENDING_REVIEW') return isSelected ? '#fff9c4' : '#fffde7';
@@ -76,12 +78,13 @@ function getRowBg(sub: Questionnaire, isSelected: boolean): string {
 }
 
 const SCORES = [
-  { label: 'בטיחות', key: 'scoreSafety' },
   { label: 'תפקוד', key: 'scoreFunctioning' },
-  { label: 'גופני/סמים', key: 'scorePhysicalDrug' },
+  { label: 'גופני', key: 'scorePhysicalDrug' },
   { label: 'סביבה', key: 'scoreEnvironment' },
   { label: 'דחק', key: 'scoreStress' },
   { label: 'מוכנות', key: 'scoreReadiness' },
+  { label: 'פגיעה עצמית', key: 'scoreSafetyHarm' },
+  { label: 'פגיעה מאחרים', key: 'scoreSafetyOthers' },
 ] as const;
 
 export default function DashboardTable({
@@ -343,7 +346,7 @@ export default function DashboardTable({
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
               <div style={{
                 width: '48px', height: '48px', borderRadius: '50%', flexShrink: 0,
-                background: selected.scoreSafety === 5
+                background: Math.max(selected.scoreSafetyHarm, selected.scoreSafetyOthers) >= 4
                   ? 'linear-gradient(135deg,#ef5350,#c62828)'
                   : 'linear-gradient(135deg,var(--hy-blue),var(--hy-dark-blue))',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -368,7 +371,7 @@ export default function DashboardTable({
           </div>
 
           {/* Safety alert */}
-          {selected.scoreSafety === 5 && (
+          {Math.max(selected.scoreSafetyHarm, selected.scoreSafetyOthers) >= 4 && (
             <div style={{
               background: '#ffebee', border: '1px solid #ef9a9a', borderRadius: '8px',
               padding: '12px 16px', marginBottom: '20px',
@@ -404,7 +407,7 @@ export default function DashboardTable({
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '8px', marginBottom: '12px' }}>
                 {SCORES.map(({ label, key }) => {
                   const val = (selected as any)[key] as number;
-                  const urgent = key === 'scoreSafety' && val === 5;
+                  const urgent = (key === 'scoreSafetyHarm' || key === 'scoreSafetyOthers') && val === 5;
                   return (
                     <div key={key} style={{
                       textAlign: 'center', padding: '8px 4px', borderRadius: '8px',

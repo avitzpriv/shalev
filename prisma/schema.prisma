@@ -54,12 +54,13 @@ model Questionnaire {
   militaryService String
 
   // Part B: Evaluation (1-5)
-  scoreSafety           Int
   scoreFunctioning      Int
   scorePhysicalDrug     Int
   scoreEnvironment      Int
   scoreStress           Int
   scoreReadiness        Int
+  scoreSafetyHarm       Int  @default(5)
+  scoreSafetyOthers     Int  @default(5)
 
   // Part C: Background
   isFirstVisit        Boolean

@@ -7,12 +7,13 @@ import { calculateLOCUS } from "@/app/lib/locus";
 export async function submitQuestionnaire(formData: any) {
   try {
     const scores = {
-      scoreSafety: parseInt(formData.scoreSafety),
       scoreFunctioning: parseInt(formData.scoreFunctioning),
       scorePhysicalDrug: parseInt(formData.scorePhysicalDrug),
       scoreEnvironment: parseInt(formData.scoreEnvironment),
       scoreStress: parseInt(formData.scoreStress),
       scoreReadiness: parseInt(formData.scoreReadiness),
+      scoreSafetyHarm: parseInt(formData.scoreSafetyHarm),
+      scoreSafetyOthers: parseInt(formData.scoreSafetyOthers),
     };
     const hasRehabBasket = formData.rehabBasket === 'כן';
 
@@ -75,12 +76,13 @@ export async function submitQuestionnaire(formData: any) {
 export async function updateQuestionnaire(id: string, formData: any) {
   try {
     const scores = {
-      scoreSafety: parseInt(formData.scoreSafety),
       scoreFunctioning: parseInt(formData.scoreFunctioning),
       scorePhysicalDrug: parseInt(formData.scorePhysicalDrug),
       scoreEnvironment: parseInt(formData.scoreEnvironment),
       scoreStress: parseInt(formData.scoreStress),
       scoreReadiness: parseInt(formData.scoreReadiness),
+      scoreSafetyHarm: parseInt(formData.scoreSafetyHarm),
+      scoreSafetyOthers: parseInt(formData.scoreSafetyOthers),
     };
     const hasRehabBasket = formData.rehabBasket === 'כן';
 

@@ -77,13 +77,15 @@ export default async function SubmissionDetails({ params }: { params: Promise<{ 
   );
 
   const scores = [
-    { label: "בטיחות",      value: submission.scoreSafety },
-    { label: "תפקוד",       value: submission.scoreFunctioning },
-    { label: "גופני/סמים",  value: submission.scorePhysicalDrug },
-    { label: "סביבה",       value: submission.scoreEnvironment },
-    { label: "דחק",         value: submission.scoreStress },
-    { label: "מוכנות",      value: submission.scoreReadiness },
+    { label: "תפקוד",         value: submission.scoreFunctioning },
+    { label: "גופני",         value: submission.scorePhysicalDrug },
+    { label: "סביבה",         value: submission.scoreEnvironment },
+    { label: "דחק",           value: submission.scoreStress },
+    { label: "מוכנות",        value: submission.scoreReadiness },
+    { label: "פגיעה עצמית",   value: submission.scoreSafetyHarm },
+    { label: "פגיעה מאחרים",  value: submission.scoreSafetyOthers },
   ];
+  const effectiveSafety = Math.max(submission.scoreSafetyHarm, submission.scoreSafetyOthers);
 
   const personalDetails = [
     { icon: "🪪",  label: "ת.ז",           value: submission.idNumber },
@@ -112,7 +114,7 @@ export default async function SubmissionDetails({ params }: { params: Promise<{ 
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <div style={{
             width: "44px", height: "44px", borderRadius: "50%",
-            background: submission.scoreSafety === 5
+            background: effectiveSafety === 5
               ? "linear-gradient(135deg,#ef5350,#c62828)"
               : "linear-gradient(135deg,var(--hy-blue),var(--hy-dark-blue))",
             display: "flex", alignItems: "center", justifyContent: "center",
@@ -132,7 +134,7 @@ export default async function SubmissionDetails({ params }: { params: Promise<{ 
       </div>
 
       {/* ── SAFETY ALERT ── */}
-      {submission.scoreSafety >= 4 && (
+      {effectiveSafety >= 4 && (
         <div className="card" style={{
           background: "#ffebee", border: "2px solid #ef9a9a", padding: "14px 20px",
           display: "flex", alignItems: "center", gap: "12px",
@@ -140,7 +142,7 @@ export default async function SubmissionDetails({ params }: { params: Promise<{ 
           <span style={{ fontSize: "1.6rem" }}>⚠️</span>
           <div>
             <div style={{ fontWeight: 700, color: "#c62828", fontSize: "1rem" }}>
-              שימו לב: ציון בטיחות גבוה ({submission.scoreSafety})
+              שימו לב: ציון בטיחות גבוה ({effectiveSafety})
             </div>
             <div style={{ fontSize: "0.85rem", color: "#e53935" }}>נדרשת התייחסות דחופה!</div>
           </div>
@@ -174,7 +176,7 @@ export default async function SubmissionDetails({ params }: { params: Promise<{ 
           <h2>חלק ב׳ · ציוני הערכה (1–5)</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "10px", marginBottom: "20px" }}>
             {scores.map(s => {
-              const urgent = s.label === "בטיחות" && s.value === 5;
+              const urgent = (s.label === "פגיעה עצמית" || s.label === "פגיעה מאחרים") && s.value === 5;
               return (
                 <div key={s.label} style={{
                   textAlign: "center", padding: "14px 8px", borderRadius: "10px",

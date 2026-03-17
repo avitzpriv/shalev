@@ -34,12 +34,13 @@ export default function QuestionnaireForm({ hmoOptions, referralReasons, initial
     receivesDisability: initialData?.receivesDisability ? 'כן' : 'לא',
     militaryService: initialData?.militaryService || 'מלא',
 
-    scoreSafety: initialData?.scoreSafety ?? 5,
-    scoreFunctioning: initialData?.scoreFunctioning ?? 5,
-    scorePhysicalDrug: initialData?.scorePhysicalDrug ?? 5,
-    scoreEnvironment: initialData?.scoreEnvironment ?? 5,
-    scoreStress: initialData?.scoreStress ?? 5,
-    scoreReadiness: initialData?.scoreReadiness ?? 5,
+    scoreFunctioning: initialData?.scoreFunctioning ?? 1,
+    scorePhysicalDrug: initialData?.scorePhysicalDrug ?? 1,
+    scoreEnvironment: initialData?.scoreEnvironment ?? 1,
+    scoreStress: initialData?.scoreStress ?? 1,
+    scoreReadiness: initialData?.scoreReadiness ?? 1,
+    scoreSafetyHarm: initialData?.scoreSafetyHarm ?? 1,
+    scoreSafetyOthers: initialData?.scoreSafetyOthers ?? 1,
 
     hasDrugUse: initialData?.hasDrugUse ? 'כן' : 'לא',
     drugType: initialData?.drugType || '',
@@ -108,12 +109,41 @@ export default function QuestionnaireForm({ hmoOptions, referralReasons, initial
   }
 
   const scoreItems = [
-    { id: 'scoreSafety',      label: 'מידת ביטחון מפני פגיעה עצמית/אחרים' },
-    { id: 'scoreFunctioning', label: 'יכולת ביצוע מטלות רגילות' },
-    { id: 'scorePhysicalDrug',label: 'קושי עקב בעיות רפואיות/חומרים' },
-    { id: 'scoreEnvironment', label: 'נוכחות אנשים קרובים לסיוע' },
-    { id: 'scoreStress',      label: 'מידת הצפה מאירועי חיים' },
-    { id: 'scoreReadiness',   label: 'פניות ומוכנות לטיפול' },
+    {
+      id: 'scoreFunctioning', label: 'יכולת לתפקד ביום יום',
+      pre: 'אני מרגיש שב-30 ימים האחרונים', post: 'לי לתפקד ביום יום',
+      levels: ['קל מאוד', 'קל יחסית', 'לא קל ולא קשה', 'קשה', 'קשה מאוד'],
+    },
+    {
+      id: 'scorePhysicalDrug', label: 'קושי בגלל בעיות רפואיות',
+      pre: 'אני מרגיש שב-30 ימים האחרונים', post: 'בגלל בעיות רפואיות',
+      levels: ['כמעט אין קושי', 'מעט קושי', 'קושי מסוים', 'קושי רב', 'קושי רב מאוד'],
+    },
+    {
+      id: 'scoreEnvironment', label: 'סביבה תומכת',
+      pre: 'אני מרגיש שב-30 ימים האחרונים הסביבה שלי', post: '',
+      levels: ['תומכת בי מאוד', 'תומכת בי', 'תומכת בי מעט', 'כמעט לא תומכת בי', 'לא תומכת בי כלל'],
+    },
+    {
+      id: 'scoreStress', label: 'עד כמה הרגשת מוצף/ת מהדברים שקרו בחיים שלך',
+      pre: 'אני מרגיש שב-30 ימים האחרונים', post: 'מהדברים שקרו בחיים שלי',
+      levels: ['כמעט ולא הרגשתי מוצף', 'הרגשתי מעט מוצף', 'הרגשתי מוצף', 'הרגשתי מוצף מאוד', 'הרגשתי הצפה קשה מאוד'],
+    },
+    {
+      id: 'scoreReadiness', label: 'אני רוצה טיפול ופנוי אליו',
+      pre: 'אני מרגיש שב-30 ימים האחרונים אני', post: 'לטיפול',
+      levels: ['מאוד רוצה ופתוח', 'רוצה ופתוח', 'לא בטוח לגבי הפניה', 'לא ממש רוצה', 'לא רוצה'],
+    },
+    {
+      id: 'scoreSafetyHarm', label: 'חושש לפגוע בעצמי',
+      pre: 'אני מרגיש שב-30 ימים האחרונים', post: 'חשבתי לפגוע בעצמי',
+      levels: ['כמעט לא', 'לעתים רחוקות', 'לפעמים', 'לעתים קרובות', 'לעתים קרובות מאוד'],
+    },
+    {
+      id: 'scoreSafetyOthers', label: 'חושש להיפגע מאחרים',
+      pre: 'אני מרגיש שב-30 ימים האחרונים', post: 'חשבתי שאיפגע מאחרים',
+      levels: ['כמעט לא', 'לעתים רחוקות', 'לפעמים', 'לעתים קרובות', 'לעתים קרובות מאוד'],
+    },
   ];
 
   return (
@@ -247,27 +277,41 @@ export default function QuestionnaireForm({ hmoOptions, referralReasons, initial
         <div className="card">
           <h2>חלק ב׳ · הערכת תפקוד ורווחה</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '20px', fontSize: '0.92rem' }}>
-            דרג מ-1 (קושי משמעותי) עד 5 (ללא קושי כלל) עבור 30 הימים האחרונים:
+            דרג מ-1 (ללא קושי) עד 5 (קושי משמעותי) עבור 30 הימים האחרונים:
           </p>
 
           <div style={{ display: 'grid', gap: '16px' }}>
             {scoreItems.map(q => {
               const val = (formData as any)[q.id] as number;
-              const isLow = val <= 2;
+              const isHigh = val >= 4;
+              const levelText = q.levels[val - 1];
+              const levelColor = isHigh ? '#c62828' : val <= 2 ? '#2e7d32' : '#1565c0';
               return (
                 <div key={q.id} style={{
                   padding: '16px 18px', borderRadius: '10px',
-                  background: isLow ? '#fff8f8' : '#f8fafc',
-                  border: `1px solid ${isLow ? '#ffcdd2' : 'var(--border-color)'}`,
+                  background: isHigh ? '#fff8f8' : '#f8fafc',
+                  border: `1px solid ${isHigh ? '#ffcdd2' : 'var(--border-color)'}`,
                 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                    <label className="label mandatory" style={{ margin: 0, fontSize: '0.92rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label className="label mandatory" style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>
                       {q.label}
                     </label>
                     <span style={{
                       fontSize: '1.5rem', fontWeight: 800, minWidth: '36px', textAlign: 'center',
-                      color: isLow ? '#c62828' : val >= 4 ? '#2e7d32' : 'var(--hy-blue)',
+                      color: levelColor,
                     }}>{val}</span>
+                  </div>
+                  <div style={{
+                    fontSize: '0.88rem', color: '#444', marginBottom: '10px',
+                    padding: '8px 12px', background: 'white', borderRadius: '8px',
+                    border: `1px solid ${isHigh ? '#ffcdd2' : '#e2e8f0'}`,
+                    lineHeight: 1.5,
+                  }}>
+                    {q.pre}{' '}
+                    <span style={{ fontWeight: 700, color: levelColor }}>
+                      {levelText}
+                    </span>
+                    {q.post ? ` ${q.post}` : ''}
                   </div>
                   <input
                     type="range"
@@ -279,9 +323,9 @@ export default function QuestionnaireForm({ hmoOptions, referralReasons, initial
                     onChange={handleChange}
                     value={val}
                   />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--text-secondary)', padding: '2px 2px 0' }}>
-                    <span>1 — קושי משמעותי</span>
-                    <span>5 — ללא קושי</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', color: 'var(--text-secondary)', padding: '2px 2px 0' }}>
+                    <span>1 — ללא קושי</span>
+                    <span>5 — קושי משמעותי</span>
                   </div>
                 </div>
               );

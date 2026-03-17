@@ -1,20 +1,23 @@
 export function calculateLOCUS(scores: {
-  scoreSafety: number;
   scoreFunctioning: number;
   scorePhysicalDrug: number;
   scoreEnvironment: number;
   scoreStress: number;
   scoreReadiness: number;
+  scoreSafetyHarm: number;
+  scoreSafetyOthers: number;
 }, hasRehabBasket: boolean) {
   const {
-    scoreSafety: s,
     scoreFunctioning: f,
     scorePhysicalDrug: h,
     scoreEnvironment: u,
     scoreStress: st,
-    scoreReadiness: e
+    scoreReadiness: e,
+    scoreSafetyHarm: sh,
+    scoreSafetyOthers: so,
   } = scores;
 
+  const s = Math.max(sh, so); // effective safety score
   const totalSum = s + f + h + u + st + e;
 
   let locusLevel = 1;
